@@ -26,8 +26,28 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
-    
+    const usersCollection = client.db("task-management").collection('users')
 
+
+
+    // post user to the database 
+    app.post('/users', async(req, res) =>{
+        try {
+         const user = req.body 
+       
+         // insert email if user do not exists 
+         const query = {email: user.email}
+         const existingUser = await usersCollection.findOne(query)
+         if(existingUser){
+           return res.send({message: 'user already exist', insertedId: null})
+         }
+         const result = await usersCollection.insertOne(user)
+         res.send(result)
+         
+        } catch (error) {
+         console.log(error)
+        }
+       })
 
 
 
