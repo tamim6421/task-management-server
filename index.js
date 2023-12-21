@@ -27,6 +27,7 @@ async function run() {
     // await client.connect();
 
     const usersCollection = client.db("task-management").collection('users')
+    const taskCollection = client.db("task-management").collection('task')
 
 
 
@@ -58,6 +59,39 @@ async function run() {
             console.log(error)
         }
        })
+
+
+    //  post task to db 
+    app.post('/task', async(req, res) =>{
+        try {
+            const task = req.body
+            const result = await taskCollection.insertOne(task)
+            res.send(result)
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }) 
+
+// get task by email 
+app.get('/getTask/:email', async(req, res) =>{
+    try {
+        const query = {email: req.params.email}
+        const result = await taskCollection.find(query).toArray()
+        res.send(result)
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+// app.get('/allusers/:email',  async(req, res) =>{
+//     const query = {email: req.params.email}
+//     const result = await usersCollection.find(query).toArray()
+//     res.send(result)
+//   })
+  
+
+
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
