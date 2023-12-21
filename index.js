@@ -49,7 +49,15 @@ async function run() {
         }
        })
 
-
+    //    get all user 
+       app.get('/getUser', async(req, res) =>{
+        try {
+            const result = await usersCollection.find().toArray()
+            res.send(result)
+        } catch (error) {
+            console.log(error)
+        }
+       })
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
