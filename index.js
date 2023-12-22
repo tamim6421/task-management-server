@@ -28,7 +28,7 @@ async function run() {
 
     const usersCollection = client.db("task-management").collection('users')
     const taskCollection = client.db("task-management").collection('task')
-
+    const postCollections = client.db("task-management").collection("postData");
 
 
     // post user to the database 
@@ -73,6 +73,8 @@ async function run() {
         }
     }) 
 
+    
+
 // get task by email 
 app.get('/getTask/:email', async(req, res) =>{
     try {
@@ -83,6 +85,38 @@ app.get('/getTask/:email', async(req, res) =>{
         console.log(error)
     }
 })
+
+
+   // post all post task 
+   app.post('/posts', async(req, res) =>{
+    try {
+      const post = req.body 
+      const result = await postCollections.insertOne(post)
+      res.send(result)
+      
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+
+
+  // get post data 
+app.get('/allpost',  async(req, res) =>{
+try {
+  const data = req.query 
+  // console.log(data)
+  const page = parseInt(req.query.page)
+  const size = parseInt(req.query.size)
+  console.log('page', page, size)
+  const count = await postCollections.estimatedDocumentCount()
+  const result = await postCollections.find().skip(page*size).limit(size).toArray()
+  res.send({result, count})
+} catch (error) {
+  console.log(error)
+}
+})
+
 
 // app.get('/allusers/:email',  async(req, res) =>{
 //     const query = {email: req.params.email}
